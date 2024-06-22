@@ -21,7 +21,7 @@ from tkinter import *
 # **Environment for Question 1**
 
 # %%
-print("q1")
+#print("q1")
 
 # %% [markdown]
 # **Environment*for Question 2* 
@@ -29,14 +29,163 @@ print("q1")
 # %%
 
 
-# Create the environment
+# Create the three different environments
 # We are modeling this environment using 8 states in the format: {stock_currently_holding,state_of_stock_1,state_of_stock_2}
 
 action_keep = 0     # keep the same stock 
 action_switch = 1   # switch to the other stock
 
+# This environment is used for the question 1 where we need to demonstrate that the optimal 
+# policy is always to stay with the stock we already have invested
+fee = -0.9
+# r1H = 2*r2L
+# in this case r1.h=0.1 // r2.H= 0.05 // r1.L = -0.02 // r2.L = 0.01
+# we have used a large transaction fee so that the best policy will always be to keep using the same stock
+P1 = {
 
-P = {
+    # State {1,L,L}
+    0:{
+        action_keep: [
+             (9/20, 0, -0.02),    # probability: 9/20, next_State: {1,L,L}, Reward: -0.02
+             (1/20, 1, -0.02),    # {1,L,H}
+             (9/20, 2, +0.1),     # {1,H,L}
+             (1/20, 3, +0.1)      # {1,H,H}
+        ],
+
+        action_switch:[
+            (9/20, 4, +0.01 + fee),    # {2,L,L}
+            (1/20, 5, +0.05 + fee),    # {2,L,H}
+            (9/20, 6, +0.01 + fee),    # {2,H,L}
+            (1/20, 7, +0.05 + fee)     # {2,H,H}
+        ]
+    },
+
+    # State {1,L,H}
+    1:{
+        action_keep: [
+             (1/20, 0, -0.02),  # {1,L,L}
+             (9/20, 1, -0.02),  # {1,L,H}
+             (1/20, 2, +0.1 ),  # {1,H,L}
+             (9/20, 3, +0.1 )   # {1,H,H}
+        ],
+
+        action_switch:[
+            (1/20, 4, +0.01 + fee),    # {2,L,L}
+            (9/20, 5, +0.05 + fee),    # {2,L,H}
+            (1/20, 6, +0.01 + fee),    # {2,H,L}
+            (9/20, 7, +0.05 + fee)     # {2,H,H}
+        ]
+    },
+
+    # State {1,H,L}
+    2:{
+        action_keep: [
+             (9/20, 0, -0.02),  # {1,L,L}
+             (1/20, 1, -0.02),  # {1,L,H}
+             (9/20, 2, +0.1 ),  # {1,H,L}
+             (1/20, 3, +0.1 )   # {1,H,H}
+        ],
+
+        action_switch:[
+            (9/20, 4, +0.01 + fee),    # {2,L,L}
+            (1/20, 5, +0.05 + fee),    # {2,L,H}
+            (9/20, 6, +0.01 + fee),    # {2,H,L}
+            (1/20, 7, +0.05 + fee)     # {2,H,H}
+        ]
+    },
+
+    # State {1,H,H}
+    3:{
+        action_keep: [
+             (1/20, 0, -0.02),  # {1,L,L}
+             (9/20, 1, -0.02),  # {1,L,H}
+             (1/20, 2, +0.1 ),  # {1,H,L}
+             (9/20, 3, +0.1 )   # {1,H,H}
+        ],
+
+        action_switch: [
+            (1/20, 4, +0.01 + fee),    # {2,L,L}
+            (9/20, 5, +0.05 + fee),    # {2,L,H}
+            (1/20, 6, +0.01 + fee),    # {2,H,L}
+            (9/20, 7, +0.05 + fee)     # {2,H,H}
+        ]
+    },
+
+    # State {2,L,L}
+    4:{
+        action_keep: [
+             (9/20, 4,  +0.01),    # {2,L,L}
+             (1/20, 5,  +0.05),    # {2,L,H}
+             (9/20, 6,  +0.01),    # {2,H,L}
+             (1/20, 7,  +0.05)     # {2,H,H}
+        ],
+
+        action_switch:[
+             (9/20, 0, -0.02 + fee),  # {1,L,L}
+             (1/20, 1, -0.02 + fee),  # {1,L,H}
+             (9/20, 2, +0.1  + fee),  # {1,H,L}
+             (1/20, 3, +0.1  + fee)   # {1,H,H}
+        ]
+    },
+
+    # State {2,L,H}
+    5:{
+        action_keep: [
+             (1/20, 4, +0.01),    # {2,L,L}
+             (9/20, 5, +0.05),    # {2,L,H}
+             (1/20, 6, +0.01),    # {2,H,L}
+             (9/20, 7, +0.05)     # {2,H,H}
+        ],
+
+        action_switch:[
+            (1/20, 0, -0.02 + fee),  # {1,L,L}
+            (9/20, 1, -0.02 + fee),  # {1,L,H}
+            (1/20, 2, +0.1  + fee),  # {1,H,L}
+            (9/20, 3, +0.1  + fee)   # {1,H,H}
+        ]
+    },
+
+    # State {2,H,L}
+    6:{
+        action_keep: [
+             (9/20, 4, +0.01),    # {2,L,L}
+             (1/20, 5, +0.05),    # {2,L,H}
+             (9/20, 6, +0.01),    # {2,H,L}
+             (1/20, 7, +0.05)     # {2,H,H}
+        ],
+
+        action_switch:[
+             (9/20, 0, -0.02 + fee),  # {1,L,L}
+             (1/20, 1, -0.02 + fee),  # {1,L,H}
+             (9/20, 2, +0.1  + fee),  # {1,H,L}
+             (1/20, 3, +0.1  + fee)   # {1,H,H}
+        ]
+    },
+
+    # State {2,H,H}
+    7:{
+        action_keep: [
+             (1/20, 4, +0.01),    # {2,L,L}
+             (9/20, 5, +0.05),    # {2,L,H}
+             (1/20, 6, +0.01),    # {2,H,L}
+             (9/20, 7, +0.05)     # {2,H,H}
+        ],
+
+        action_switch:[
+             (1/20, 0, -0.02 + fee),  # {1,L,L}
+             (9/20, 1, -0.02 + fee),  # {1,L,H}
+             (1/20, 2, +0.1  + fee),  # {1,H,L}
+             (9/20, 3, +0.1  + fee)   # {1,H,H}
+        ]
+    }
+
+}
+
+
+# This environment implements the stocks environment from the midterm
+# It is used for the question 2 where we need to demonstrate that the optimal policy
+# for some of the states is to switch and in some others to stay
+P2 = {
 
     # State {1,L,L}
     0:{
@@ -176,27 +325,24 @@ P = {
 
 }
 
-reward_values = [-0.02, -0.02, 0.1, 0.1, 0.01, 0.05, 0.01, 0.05]
-reward = np.array(reward_values)
-holes = []
+# reward_values = [-0.02, -0.02, 0.1, 0.1, 0.01, 0.05, 0.01, 0.05]
+# reward = np.array(reward_values)
+# holes = []
 
 
 
 # %% [markdown]
 # **Creating the environment for Question 3**
 
-# %%
-print("HI")
 
 # %% [markdown]
 # **Implementing Policy Iteration Algorithm**
 
 # %%
 # The next few lines are mostly for accounting
-Tmax = 100000
-size = len(P)
+Tmax = 100000000
+size = len(P2)
 n = m = np.sqrt(size)
-print(size)
 Vplot = np.zeros((size,Tmax)) #these keep track how the Value function evolves, to be used in the GUI
 Pplot = np.zeros((size,Tmax)) #these keep track how the Policy evolves, to be used in the GUI
 t = 0
@@ -205,6 +351,7 @@ t = 0
 #this one is generic to be applied in many AI gym compliant environments
 
 def policy_evaluation(pi, P, gamma = 1.0, epsilon = 1e-10):  #inputs: (1) policy to be evaluated, (2) model of the environment (transition probabilities, etc., see previous cell), (3) discount factor (with default = 1), (4) convergence error (default = 10^{-10})
+    #print("in policy EVALUATION")
     t = 0   #there's more elegant ways to do this
     prev_V = np.zeros(len(P)) # use as "cost-to-go", i.e. for V(s')
     while True:
@@ -212,15 +359,18 @@ def policy_evaluation(pi, P, gamma = 1.0, epsilon = 1e-10):  #inputs: (1) policy
         for s in range(len(P)):  # do for every state
             for prob, next_state, reward in P[s][pi(s)]:  # calculate one Bellman step --> i.e., sum over all probabilities of transitions and reward for that state, the action suggested by the (fixed) policy, the reward earned (dictated by the model), and the cost-to-go from the next state (which is also decided by the model)
                 V[s] += prob * (reward + gamma * prev_V[next_state])
-        if np.max(np.abs(prev_V - V)) < epsilon: #check if the new V estimate is close enough to the previous one; 
+        #print(np.max(np.abs(prev_V - V)))
+        if np.max(np.abs(prev_V - V)) < epsilon: #check if the new V estimate is close enough to the previous one;     
             break # if yes, finish loop
         prev_V = V.copy() #freeze the new values (to be used as the next V(s'))
         t += 1
         Vplot[:,t] = prev_V  # accounting for GUI  
+    #print("num of evaluation iterations ",t)
     return V
 
 
 def policy_improvement(V, P, gamma=1.0):  # takes a value function (as the cost to go V(s')), a model, and a discount parameter
+    #print("in policy IMPROVEMENT")
     Q = np.zeros((len(P), len(P[0])), dtype=np.float64) #create a Q value array
     for s in range(len(P)):        # for every state in the environment/model
         for a in range(len(P[s])):  # and for every action in that state
@@ -238,7 +388,9 @@ def policy_iteration(P, gamma = 1.0, epsilon = 1e-10):
     t = 0
     random_actions = np.random.choice(tuple(P[0].keys()), len(P))     # start with random actions for each state  
     pi = lambda s: {s:a for s, a in enumerate(random_actions)}[s]     # and define your initial policy pi_0 based on these action (remember, we are passing policies around as python "functions", hence the need for this second line)
-    
+    print("Policy in first iteration:")
+    print_policy(pi)
+    print("\n")
     while True:
         old_pi = {s: pi(s) for s in range(len(P))}  #keep the old policy to compare with new
         V = policy_evaluation(pi,P,gamma,epsilon)   #evaluate latest policy --> you receive its converged value function
@@ -250,18 +402,33 @@ def policy_iteration(P, gamma = 1.0, epsilon = 1e-10):
     
         if old_pi == {s:pi(s) for s in range(len(P))}: # you have converged to the optimal policy if the "improved" policy is exactly the same as in the previous step
             break
-    print('converged after %d iterations' %t) #keep track of the number of (outer) iterations to converge
+    print('Converged after %d Policy Iterations' %t) #keep track of the number of (outer) iterations to converge
     return V,pi
 
-n = 4
-m = 4
+
+# Function to print policy
+def print_policy(policy, num_states=8):
+    for s in range(num_states):
+        print(f"State {s}: Action {policy(s)}")
+        
+
+
+#############################################################
+###################### Question 1 ###########################
+#print("before policy_iteration ")
+V_opt1,P_opt1 = policy_iteration(P1,0)
+print("\nPolicy after optimization:")
+print_policy(P_opt1)
+
+
 
 
 #############################################################
 ###################### Question 2 ###########################
-
-V_opt,P_opt = policy_iteration(P,gamma = 1)
-
+# print("before policy_iteration ")
+# V_opt2,P_opt2 = policy_iteration(P2,0.9)
+# print("\nPolicy after optimization:")
+# print_policy(P_opt2)
 
 
 # The following implements the GUI if you are going to use it on your own PC. It will not run as is on Colab. 
@@ -269,91 +436,91 @@ V_opt,P_opt = policy_iteration(P,gamma = 1)
 # If you want to use in Colab, comment out the code from this point on.
 
 
-def P_to_text(a):
-    if a == 0: return 'K' 
-    if a == 1: return 'S'
-    # if a == 2: return 'R'
-    # if a == 3: return 'U'
+# def P_to_text(a):
+#     if a == 0: return 'K' 
+#     if a == 1: return 'S'
+#     # if a == 2: return 'R'
+#     # if a == 3: return 'U'
     
     
-for s in range(len(P)):
-    print(P_opt(s))
+# for s in range(len(P)):
+#     print(P_opt(s))
 
-frame_text_V = tk.Frame()
-frame_V = tk.Frame(highlightbackground="blue", highlightthickness=2)
-frame_text_P = tk.Frame()
-frame_P = tk.Frame(highlightbackground="green", highlightthickness=2)
-frame_text_R = tk.Frame()
-frame_R = tk.Frame(highlightbackground="red", highlightthickness=2)
+# frame_text_V = tk.Frame()
+# frame_V = tk.Frame(highlightbackground="blue", highlightthickness=2)
+# frame_text_P = tk.Frame()
+# frame_P = tk.Frame(highlightbackground="green", highlightthickness=2)
+# frame_text_R = tk.Frame()
+# frame_R = tk.Frame(highlightbackground="red", highlightthickness=2)
 
 
 
-def submit():
-    iter = int(e.get())
-    rows = []
+# def submit():
+#     iter = int(e.get())
+#     rows = []
 
-    for i in range(n):
-        cols = []
-        for j in range(m):
-#            e = Entry(relief=GROOVE, master = frame_V)
-            e2 = tk.Label(master = frame_V, text = ( '%f'  %(Vplot[i*m+j,iter])), font=("Arial", 14))
-            e2.grid(row=i, column=j, sticky=N+S+E+W, padx=10, pady = 10)   
-#            e.insert(END, '%f'  %(v[i,j]))
-            cols.append(e2)    
-        rows.append(cols)
+#     for i in range(n):
+#         cols = []
+#         for j in range(m):
+# #            e = Entry(relief=GROOVE, master = frame_V)
+#             e2 = tk.Label(master = frame_V, text = ( '%f'  %(Vplot[i*m+j,iter])), font=("Arial", 14))
+#             e2.grid(row=i, column=j, sticky=N+S+E+W, padx=10, pady = 10)   
+# #            e.insert(END, '%f'  %(v[i,j]))
+#             cols.append(e2)    
+#         rows.append(cols)
     
-    rows = []
+#     rows = []
 
-    for i in range(n):
-        cols = []
-        for j in range(m):
-#            e = Entry(relief=GROOVE, master = frame_V)
-            if i*m+j in holes:
-                e3 = tk.Label(master = frame_P, text = 'H', font=("Arial", 18))
-            else:
-                e3 = tk.Label(master = frame_P, text = P_to_text((Pplot[i*m+j,iter])), font=("Arial", 14))
-            e3.grid(row=i, column=j, sticky=N+S+E+W, padx=10, pady = 10)            
-#            e.insert(END, '%f'  %(v[i,j]))
-            cols.append(e3)
-        rows.append(cols)
+#     for i in range(n):
+#         cols = []
+#         for j in range(m):
+# #            e = Entry(relief=GROOVE, master = frame_V)
+#             if i*m+j in holes:
+#                 e3 = tk.Label(master = frame_P, text = 'H', font=("Arial", 18))
+#             else:
+#                 e3 = tk.Label(master = frame_P, text = P_to_text((Pplot[i*m+j,iter])), font=("Arial", 14))
+#             e3.grid(row=i, column=j, sticky=N+S+E+W, padx=10, pady = 10)            
+# #            e.insert(END, '%f'  %(v[i,j]))
+#             cols.append(e3)
+#         rows.append(cols)
          
-rows = []
+# rows = []
     
-for i in range(n):
-    cols = []
-    for j in range(m):
-        e2 = tk.Label(master = frame_R, text = ( '%f'  %(reward[i*m+j])), font=("Arial", 14))
-        e2.grid(row=i, column=j, sticky=N+S+E+W, padx=10, pady = 10)
-#        e2.insert(END, '%f'  %(r[i,j]))
-        cols.append(e2)
-    rows.append(cols)
+# for i in range(n):
+#     cols = []
+#     for j in range(m):
+#         e2 = tk.Label(master = frame_R, text = ( '%f'  %(reward[i*m+j])), font=("Arial", 14))
+#         e2.grid(row=i, column=j, sticky=N+S+E+W, padx=10, pady = 10)
+# #        e2.insert(END, '%f'  %(r[i,j]))
+#         cols.append(e2)
+#     rows.append(cols)
     
     
 
-label_V = tk.Label(master=frame_text_V, text="Value Function at Iteration:", font=("Arial", 18))
-label_V.pack()
-iter_btn=tk.Button(frame_text_V,text = 'Submit', command = submit, font=("Arial", 18))
-iter_btn.pack()
-e = Entry(relief=GROOVE, master = frame_text_V, font=("Arial", 18))
-e.pack()
+# label_V = tk.Label(master=frame_text_V, text="Value Function at Iteration:", font=("Arial", 18))
+# label_V.pack()
+# iter_btn=tk.Button(frame_text_V,text = 'Submit', command = submit, font=("Arial", 18))
+# iter_btn.pack()
+# e = Entry(relief=GROOVE, master = frame_text_V, font=("Arial", 18))
+# e.pack()
 
 
 
-label_P = tk.Label(master=frame_text_P, text="Optimal Policy:", font=("Arial", 18))
-label_P.pack()
+# label_P = tk.Label(master=frame_text_P, text="Optimal Policy:", font=("Arial", 18))
+# label_P.pack()
 
-label_R = tk.Label(master=frame_text_R, text="Reward Function:", font=("Arial", 18))
-label_R.pack()
+# label_R = tk.Label(master=frame_text_R, text="Reward Function:", font=("Arial", 18))
+# label_R.pack()
 
-frame_text_V.pack()
-frame_V.pack()
-frame_text_P.pack()
-frame_P.pack()
-frame_text_R.pack()
-frame_R.pack()
+# frame_text_V.pack()
+# frame_V.pack()
+# frame_text_P.pack()
+# frame_P.pack()
+# frame_text_R.pack()
+# frame_R.pack()
 
 
-mainloop()
+# mainloop()
 
 
 
