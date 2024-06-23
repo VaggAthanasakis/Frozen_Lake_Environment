@@ -332,30 +332,148 @@ P2 = {
 
 # Since every stock can have two price states, the number of total states in the MDP 
 # we are creating will be = NumOfStoscks*2^numOfStocks
-def creatingP3Envinronment(N):
-    uniform_dict = {}
-    for i in range(1, N + 1):
-        uniform_dict[i] = random.uniform(a, b)
-    return uniform_dict  
+
+
+def decimal_to_binary_array(decimal, length):
+    
+    # Convert decimal to binary string (strip '0b' prefix)
+    binary_string = bin(decimal)[2:]
+    
+    # Determine padding length
+    padding_length = max(0, length - len(binary_string))
+    
+    # Pad binary string with leading zeros if needed
+    padded_binary_string = '0' * padding_length + binary_string
+    
+    # Convert padded binary string to list of binary digits
+    binary_array = [int(bit) for bit in padded_binary_string]
+    
+    return binary_array
+
+
+
+def decimal_to_binary_array_without_Padding(decimal):
+    binary_string = bin(decimal)[2:]
+    binary_array = [int(bit) for bit in binary_string]
+    return binary_array
+
+
+def generate_environment(N):
+    
+    states_for_each_stock = 2**N
+    total_states = N * states_for_each_stock
+    max_state_length = N
+    print(max_state_length)
+    
+    P = {}
+    pi = []
+    #Creating transition probabilities for the keep action
+    #of EACH stock
+    for i in range(0,N):
+        if(i < N/2):
+            # pi_HL = pi_LH = 0.1 | # pi_HH = pi_LL = 0.9
+            row = [0.9,0.1,0.1,0.9] #[LL,LH,HL,HH]            
+        else:
+            # pi_HL = pi_LH = 0.5 | # pi_HH = pi_LL = 0.5
+            row = [0.5,0.5,0.5,0.5] #[LL,LH,HL,HH]       
+        pi.append(row)    
+
+    
+    for i in range(0, total_states):
+        SubDictionary={}
+        action_Keep = [] 
+        action_Switch = []
+
+        # find what stock we are reffering to 
+        # Stock ids start from 0
+        stock = i // states_for_each_stock
+        
+        ##########################
+        # We define states of L and H with binary ids
+        # For example for 2 stocks this stranslation occurs:
+        # LL -> 0,0 -> 0
+        # LH -> 0,1 -> 1
+        # HL -> 1,0 -> 2
+        # HH -> 1,1 -> 3
+        # The binary ids are then translated to decimals so that 
+        # we can use them in code
+        ##########################
+        
+        current_state = i - stock * states_for_each_stock # find where this specific stock starts at the total_states environment
+                                                          # this is necessary to calculate the transition probabilities
+        
+        #binary_string = bin(current_state)[2:]                 # Convert decimal to binary string        
+        #curr_state_array = [int(digit) for digit in binary_string] # Convert the binary string to a list of integers (0s and 1s)
+        # We can now use the array to find if each stock is in high (1s) or low (0s) state
+        # So We now know that we are at state {x,L,L,H....,H} with x the number of current stock
+        
+        curr_state_array = decimal_to_binary_array(current_state, max_state_length)
+   
+        #__Keep Stock ________________________________________________________________________________________________________________
+        for j in range (stock*2**N, ((stock+1)*2**N)): # for every possible transition when keeping the same stock
+            state_to_trans = j - stock * states_for_each_stock          # value (H or L) of all of the stocks at the state we will transition to, in decimal form (0,1,2,3...)
+            trans_state_array = decimal_to_binary_array(state_to_trans, max_state_length) # convert to binary and take each bit separately (0 for L and 1 for H)
+            
+            transitionProb = 1
+            
+            for k in range(len(trans_state_array)):
+                stock_state_trans = trans_state_array[k] # 0 or 1 // low or high                
+                stock_state_current = curr_state_array[k] # 0 or 1 // low or high
+                
+                if(stock_state_current == 0 and stock_state_trans == 0):       # Pi_LL
+                    transitionProb = transitionProb * pi[stock][0]
+                elif(stock_state_current == 0 and stock_state_trans == 1):     # pi_LH
+                    transitionProb = transitionProb * pi[stock][1]
+                elif(stock_state_current == 1 and stock_state_trans == 0):     # pi_HL
+                    transitionProb = transitionProb * pi[stock][2]
+                else:                                                          # pi_HH
+                    transitionProb = transitionProb * pi[stock][3]
+            
+            nextState = j
+            reward = random.uniform(-0.02, 0.1)
+            action_Keep.append((transitionProb,nextState,reward))
+        #-----------------------------------------------------------------------------------------------------------------------------------------------
+        fee = 0
+        #__Switch Stock ________________________________________________________________________________________________________________
+        for j in range (0, total_states): # for every possible transition when keeping the same stock
+            trans_stock = j // states_for_each_stock
+            
+            if(trans_stock == stock):     # check if the transition stock is the same as the stock we start from
+                continue                  # we have already handle this situation above so we move on
+             
+             
+            trans_state = j - trans_stock * states_for_each_stock
+            trans_state_array = decimal_to_binary_array(trans_state, max_state_length)
+            transitionProb = 1
+            
+            for k in range(len(trans_state_array)):
+                stock_state_trans = trans_state_array[k] # 0 or 1 // low or high                
+                stock_state_current = curr_state_array[k] # 0 or 1 // low or high
+                
+                if(stock_state_current == 0 and stock_state_trans == 0):       # Pi_LL
+                    transitionProb = transitionProb * pi[stock][0]
+                elif(stock_state_current == 0 and stock_state_trans == 1):     # pi_LH
+                    transitionProb = transitionProb * pi[stock][1]
+                elif(stock_state_current == 1 and stock_state_trans == 0):     # pi_HL
+                    transitionProb = transitionProb * pi[stock][2]
+                else:                                                          # pi_HH
+                    transitionProb = transitionProb * pi[stock][3] 
+                    
+            nextState = j
+            reward = random.uniform(-0.02, 0.1) - fee
+            action_Switch.append((transitionProb,nextState,reward))   
+        
+        
+        #-----------------------------------------------------------------------------------------------------------------------------------------------
+        SubDictionary[action_keep] = action_Keep
+        SubDictionary[action_switch] = action_Switch
+        P[i]=SubDictionary
     
     
     
-    
-    
-    return P3
+    return P
 
-#random.uniform(-0.02, 0.1)
-
-
-
-
-
-
-
-# reward_values = [-0.02, -0.02, 0.1, 0.1, 0.01, 0.05, 0.01, 0.05]
-# reward = np.array(reward_values)
-# holes = []
-
+P3 = generate_environment(2)
 
 
 # %% [markdown]
@@ -456,6 +574,23 @@ print_policy(P_opt1)
 # V_opt2,P_opt2 = policy_iteration(P2,0.9)
 # print("\nPolicy after optimization:")
 # print_policy(P_opt2)
+
+
+#############################################################
+###################### Question 3 ###########################
+# print("before policy_iteration ")
+# V_opt3,P_opt3 = policy_iteration(P3,0.9)
+# print("\nPolicy after optimization:")
+# print_policy(P_opt3)
+
+
+
+
+
+
+
+
+
 
 
 # The following implements the GUI if you are going to use it on your own PC. It will not run as is on Colab. 
