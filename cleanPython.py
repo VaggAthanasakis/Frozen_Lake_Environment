@@ -325,6 +325,33 @@ P2 = {
 
 }
 
+
+# This environment implements the generic scenario of question 3 where for every stock
+# ri_H,ri_L are chosen uniformly in [-0.02, 0.1] and transition probabilities pi_HL, pi_LH 
+# are equal to 0.1 for half the stocks and 0.5 for the other half.
+
+# Since every stock can have two price states, the number of total states in the MDP 
+# we are creating will be = NumOfStoscks*2^numOfStocks
+def creatingP3Envinronment(N):
+    uniform_dict = {}
+    for i in range(1, N + 1):
+        uniform_dict[i] = random.uniform(a, b)
+    return uniform_dict  
+    
+    
+    
+    
+    
+    return P3
+
+#random.uniform(-0.02, 0.1)
+
+
+
+
+
+
+
 # reward_values = [-0.02, -0.02, 0.1, 0.1, 0.01, 0.05, 0.01, 0.05]
 # reward = np.array(reward_values)
 # holes = []
