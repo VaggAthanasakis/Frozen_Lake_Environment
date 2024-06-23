@@ -32,9 +32,11 @@ def decimal_to_binary_array_without_Padding(decimal):
 
 
 def generate_environment(N):
-    MAX_STATE_LENGTH = len(decimal_to_binary_array_without_Padding(N))
+    
     states_for_each_stock = 2**N
     total_states = N * states_for_each_stock
+    max_state_length = N
+    print(max_state_length)
     
     P = {}
     pi = []
@@ -73,38 +75,29 @@ def generate_environment(N):
         current_state = i - stock * states_for_each_stock # find where this specific stock starts at the total_states environment
                                                           # this is necessary to calculate the transition probabilities
         
-        binary_string = bin(current_state)[2:]                 # Convert decimal to binary string        
-        curr_state_array = [int(digit) for digit in binary_string] # Convert the binary string to a list of integers (0s and 1s)
+        #binary_string = bin(current_state)[2:]                 # Convert decimal to binary string        
+        #curr_state_array = [int(digit) for digit in binary_string] # Convert the binary string to a list of integers (0s and 1s)
         # We can now use the array to find if each stock is in high (1s) or low (0s) state
         # So We now know that we are at state {x,L,L,H....,H} with x the number of current stock
         
-        curr_state_array = decimal_to_binary_array(current_state, MAX_STATE_LENGTH)
+        curr_state_array = decimal_to_binary_array(current_state, max_state_length)
    
-        #__Keep Stock _______________________
+        #__Keep Stock ________________________________________________________________________________________________________________
         for j in range (stock*2**N, ((stock+1)*2**N)): # for every possible transition when keeping the same stock
             state_to_trans = j - stock * states_for_each_stock          # value (H or L) of all of the stocks at the state we will transition to, in decimal form (0,1,2,3...)
-            # binary_string = bin(state_to_trans)[2:]                     # convert to binary
-            # trans_state_array = [int(digit) for digit in binary_string] # take each bit separately (0 for L and 1 for H)
-            
-            trans_state_array = decimal_to_binary_array(state_to_trans, MAX_STATE_LENGTH) # convert to binary and take each bit separately (0 for L and 1 for H)
+            trans_state_array = decimal_to_binary_array(state_to_trans, max_state_length) # convert to binary and take each bit separately (0 for L and 1 for H)
             
             transitionProb = 1
-            # stock_state_current= 1
-            # stock_state_trans = 1
-            print("Length: ",len(trans_state_array))
-            print("trans_state_array: ",trans_state_array)
-            print("curr_state_array: ",curr_state_array)
             
             for k in range(len(trans_state_array)):
-                stock_state_trans = trans_state_array[k] # 0 or 1 // low or high
-                # print("stock_state_trans: ",stock_state_trans)
+                stock_state_trans = trans_state_array[k] # 0 or 1 // low or high                
                 stock_state_current = curr_state_array[k] # 0 or 1 // low or high
-                # print("stock_state_current: ",stock_state_trans)
+                
                 if(stock_state_current == 0 and stock_state_trans == 0):       # Pi_LL
                     transitionProb = transitionProb * pi[stock][0]
-                elif(stock_state_current == 0 and stock_state_trans == 1):  # pi_LH
+                elif(stock_state_current == 0 and stock_state_trans == 1):     # pi_LH
                     transitionProb = transitionProb * pi[stock][1]
-                elif(stock_state_current == 1 and stock_state_trans == 0):  # pi_HL
+                elif(stock_state_current == 1 and stock_state_trans == 0):     # pi_HL
                     transitionProb = transitionProb * pi[stock][2]
                 else:                                                          # pi_HH
                     transitionProb = transitionProb * pi[stock][3]
@@ -112,7 +105,39 @@ def generate_environment(N):
             nextState = j
             reward = random.uniform(-0.02, 0.1)
             action_Keep.append((transitionProb,nextState,reward))
+        #-----------------------------------------------------------------------------------------------------------------------------------------------
+        fee = 0
+        #__Switch Stock ________________________________________________________________________________________________________________
+        for j in range (0, total_states): # for every possible transition when keeping the same stock
+            trans_stock = j // states_for_each_stock
             
+            if(trans_stock == stock):     # check if the transition stock is the same as the stock we start from
+                continue                  # we have already handle this situation above so we move on
+             
+             
+            trans_state = j - trans_stock * states_for_each_stock
+            trans_state_array = decimal_to_binary_array(trans_state, max_state_length)
+            transitionProb = 1
+            
+            for k in range(len(trans_state_array)):
+                stock_state_trans = trans_state_array[k] # 0 or 1 // low or high                
+                stock_state_current = curr_state_array[k] # 0 or 1 // low or high
+                
+                if(stock_state_current == 0 and stock_state_trans == 0):       # Pi_LL
+                    transitionProb = transitionProb * pi[stock][0]
+                elif(stock_state_current == 0 and stock_state_trans == 1):     # pi_LH
+                    transitionProb = transitionProb * pi[stock][1]
+                elif(stock_state_current == 1 and stock_state_trans == 0):     # pi_HL
+                    transitionProb = transitionProb * pi[stock][2]
+                else:                                                          # pi_HH
+                    transitionProb = transitionProb * pi[stock][3] 
+                    
+            nextState = j
+            reward = random.uniform(-0.02, 0.1) - fee
+            action_Switch.append((transitionProb,nextState,reward))   
+        
+        
+        #-----------------------------------------------------------------------------------------------------------------------------------------------
         SubDictionary[action_keep] = action_Keep
         SubDictionary[action_switch] = action_Switch
         P[i]=SubDictionary
@@ -121,7 +146,7 @@ def generate_environment(N):
     
     return P
 
-P = generate_environment(2)
+P = generate_environment(6)
 #print(P)
 for key, value in P.items():
     print(f"{key}: {value}")
