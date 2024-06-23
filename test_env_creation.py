@@ -82,17 +82,24 @@ def generate_environment(N):
    
         #__Keep Stock _______________________
         for j in range (stock*2**N, ((stock+1)*2**N)): # for every possible transition when keeping the same stock
-            state_to_trans = j - stock * states_for_each_stock
-            binary_string = bin(state_to_trans)[2:]
-            trans_state_array = [int(digit) for digit in binary_string]
+            state_to_trans = j - stock * states_for_each_stock          # value (H or L) of all of the stocks at the state we will transition to, in decimal form (0,1,2,3...)
+            # binary_string = bin(state_to_trans)[2:]                     # convert to binary
+            # trans_state_array = [int(digit) for digit in binary_string] # take each bit separately (0 for L and 1 for H)
+            
+            trans_state_array = decimal_to_binary_array(state_to_trans, MAX_STATE_LENGTH) # convert to binary and take each bit separately (0 for L and 1 for H)
             
             transitionProb = 1
             # stock_state_current= 1
             # stock_state_trans = 1
             print("Length: ",len(trans_state_array))
+            print("trans_state_array: ",trans_state_array)
+            print("curr_state_array: ",curr_state_array)
+            
             for k in range(len(trans_state_array)):
                 stock_state_trans = trans_state_array[k] # 0 or 1 // low or high
+                # print("stock_state_trans: ",stock_state_trans)
                 stock_state_current = curr_state_array[k] # 0 or 1 // low or high
+                # print("stock_state_current: ",stock_state_trans)
                 if(stock_state_current == 0 and stock_state_trans == 0):       # Pi_LL
                     transitionProb = transitionProb * pi[stock][0]
                 elif(stock_state_current == 0 and stock_state_trans == 1):  # pi_LH
