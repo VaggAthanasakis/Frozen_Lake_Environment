@@ -338,7 +338,7 @@ def decimal_to_binary_array_without_Padding(decimal):
     return binary_array
 
 
-def generate_environment(N):
+def generate_environment(N,fee):
     
     states_for_each_stock = 2**N
     total_states = N * states_for_each_stock
@@ -410,10 +410,11 @@ def generate_environment(N):
                     transitionProb = transitionProb * pi[stock][3]
             
             nextState = j
+            #reward = random.uniform(-0.02, 2)
             reward = random.uniform(-0.02, 0.1)
             action_Keep.append((transitionProb,nextState,reward))
         #-----------------------------------------------------------------------------------------------------------------------------------------------
-        fee = 0.05
+        #fee = 0
         #__Switch Stock ________________________________________________________________________________________________________________
         for j in range (0, total_states): # for every possible transition when keeping the same stock
             trans_stock = j // states_for_each_stock
@@ -440,6 +441,7 @@ def generate_environment(N):
                     transitionProb = transitionProb * pi[stock][3] 
                     
             nextState = j
+            #reward = random.uniform(-0.02, 2) - fee
             reward = random.uniform(-0.02, 0.1) - fee
             action_Switch.append((transitionProb,nextState,reward))   
         
@@ -551,7 +553,8 @@ def print_policy(policy, num_states=8):
 ###################### Question 3 ###########################
 print("Question 3")
 print("before policy_iteration ")
-P3 = generate_environment(10)
+fee = 0
+P3 = generate_environment(3,fee)
 # # for key, value in P3.items():
 # #     print(f"{key}: {value}")
 
