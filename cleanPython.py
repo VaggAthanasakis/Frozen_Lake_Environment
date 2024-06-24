@@ -1,4 +1,3 @@
-
 import numpy as np
 import tkinter as tk #loads standard python GUI libraries
 import numpy as np
@@ -331,19 +330,12 @@ def decimal_to_binary_array(decimal, length):
     return binary_array
 
 
-
-def decimal_to_binary_array_without_Padding(decimal):
-    binary_string = bin(decimal)[2:]
-    binary_array = [int(bit) for bit in binary_string]
-    return binary_array
-
-
+# Function that generates the environment of N stocks dynamically, with a transaction fee  
 def generate_environment(N,fee):
     
     states_for_each_stock = 2**N
     total_states = N * states_for_each_stock
     max_state_length = N
-    #print(max_state_length)
     
     P = {}
     pi = []
@@ -382,12 +374,11 @@ def generate_environment(N,fee):
         current_state = i - stock * states_for_each_stock # find where this specific stock starts at the total_states environment
                                                           # this is necessary to calculate the transition probabilities
         
-        #binary_string = bin(current_state)[2:]                 # Convert decimal to binary string        
-        #curr_state_array = [int(digit) for digit in binary_string] # Convert the binary string to a list of integers (0s and 1s)
+        # Convert decimal to binary string        
+        # Convert the binary string to a list of integers (0s and 1s)        
+        curr_state_array = decimal_to_binary_array(current_state, max_state_length)
         # We can now use the array to find if each stock is in high (1s) or low (0s) state
         # So We now know that we are at state {x,L,L,H....,H} with x the number of current stock
-        
-        curr_state_array = decimal_to_binary_array(current_state, max_state_length)
    
         #__Keep Stock ________________________________________________________________________________________________________________
         for j in range (stock*2**N, ((stock+1)*2**N)): # for every possible transition when keeping the same stock
@@ -458,10 +449,6 @@ def generate_environment(N,fee):
 
 
 Tmax = 100000000
-size = len(P2)
-n = m = np.sqrt(size)
-Vplot = np.zeros((size,Tmax)) #these keep track how the Value function evolves, to be used in the GUI
-Pplot = np.zeros((size,Tmax)) #these keep track how the Policy evolves, to be used in the GUI
 t = 0
 
 
@@ -476,13 +463,10 @@ def policy_evaluation(pi, P, gamma = 1.0, epsilon = 1e-10):  #inputs: (1) policy
         for s in range(len(P)):  # do for every state
             for prob, next_state, reward in P[s][pi(s)]:  # calculate one Bellman step --> i.e., sum over all probabilities of transitions and reward for that state, the action suggested by the (fixed) policy, the reward earned (dictated by the model), and the cost-to-go from the next state (which is also decided by the model)
                 V[s] = np.int64(V[s] + prob * (reward + gamma * prev_V[next_state]))
-        #print(np.max(np.abs(prev_V - V)))
         if np.max(np.abs(prev_V - V)) < epsilon: #check if the new V estimate is close enough to the previous one;     
             break # if yes, finish loop
         prev_V = V.copy() #freeze the new values (to be used as the next V(s'))
         t += 1
-        #Vplot[:,t] = prev_V  # accounting for GUI  
-    #print("num of evaluation iterations ",t)
     return V
 
 
@@ -513,10 +497,7 @@ def policy_iteration(P, gamma = 1.0, epsilon = 1e-10):
         V = policy_evaluation(pi,P,gamma,epsilon)   #evaluate latest policy --> you receive its converged value function
         pi = policy_improvement(V,P,gamma)          #get a better policy using the value function of the previous one just calculated 
         
-        t += 1
-        #Pplot[:,t]= [pi(s) for s in range(len(P))]  #keep track of the policy evolution
-        #Vplot[:,t] = V                              #and the value function evolution (for the GUI)
-    
+        t += 1    
         if old_pi == {s:pi(s) for s in range(len(P))}: # you have converged to the optimal policy if the "improved" policy is exactly the same as in the previous step
             break
     print('Converged after %d Policy Iterations' %t) #keep track of the number of (outer) iterations to converge
@@ -532,10 +513,11 @@ def print_policy(policy, num_states=8):
 
 #############################################################
 ###################### Question 1 ###########################
-# print("before policy_iteration ")
-# V_opt1,P_opt1 = policy_iteration(P1,0)
-# print("\nPolicy after optimization:")
-# print_policy(P_opt1)
+print("before policy_iteration ")
+gamma = 0
+V_opt1,P_opt1 = policy_iteration(P1,gamma)
+print("\nPolicy after optimization:")
+print_policy(P_opt1)
 
 
 
@@ -544,21 +526,23 @@ def print_policy(policy, num_states=8):
 ###################### Question 2 ###########################
 print("Question 2")
 print("before policy_iteration ")
-V_opt2,P_opt2 = policy_iteration(P2,0.9)
+gamma = 0.9
+V_opt2,P_opt2 = policy_iteration(P2,gamma)
 print("\nPolicy after optimization:")
 print_policy(P_opt2)
 
 
 #############################################################
 ###################### Question 3 ###########################
-# print("Question 3")
-# print("before policy_iteration ")
-# fee = 0
-# P3 = generate_environment(3,fee)
-
-# V_opt3,P_opt3 = policy_iteration(P3,0.8)
-# print("\nPolicy after optimization:")
-# print_policy(P_opt3,len(P3))
+print("Question 3")
+print("before policy_iteration ")
+fee = 0.03
+number_of_stocks = 5
+P3 = generate_environment(number_of_stocks,fee)
+gamma = 0.8
+V_opt3,P_opt3 = policy_iteration(P3,gamma)
+print("\nPolicy after optimization:")
+print_policy(P_opt3,len(P3))
 
 
 
