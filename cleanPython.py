@@ -1,13 +1,4 @@
-# %% [markdown]
-# # **Project 2: Stock Portfolio Optimization - Assignment 3**
 
-# %% [markdown]
-# ***Athanasakis - Fragkogiannis***
-
-# %% [markdown]
-# **Importing Libraries**
-
-# %%
 import numpy as np
 import tkinter as tk #loads standard python GUI libraries
 import numpy as np
@@ -15,18 +6,6 @@ import time
 import random
 from tkinter import *
 
-
-
-# %% [markdown]
-# **Environment for Question 1**
-
-# %%
-#print("q1")
-
-# %% [markdown]
-# **Environment*for Question 2* 
-
-# %%
 
 
 # Create the three different environments
@@ -433,7 +412,7 @@ def generate_environment(N):
             reward = random.uniform(-0.02, 0.1)
             action_Keep.append((transitionProb,nextState,reward))
         #-----------------------------------------------------------------------------------------------------------------------------------------------
-        fee = 0
+        fee = 0.09
         #__Switch Stock ________________________________________________________________________________________________________________
         for j in range (0, total_states): # for every possible transition when keeping the same stock
             trans_stock = j // states_for_each_stock
@@ -473,18 +452,9 @@ def generate_environment(N):
     
     return P
 
-P3 = generate_environment(2)
 
 
-# %% [markdown]
-# **Creating the environment for Question 3**
 
-
-# %% [markdown]
-# **Implementing Policy Iteration Algorithm**
-
-# %%
-# The next few lines are mostly for accounting
 Tmax = 100000000
 size = len(P2)
 n = m = np.sqrt(size)
@@ -503,13 +473,13 @@ def policy_evaluation(pi, P, gamma = 1.0, epsilon = 1e-10):  #inputs: (1) policy
         V = np.zeros(len(P)) # current value function to be learnerd
         for s in range(len(P)):  # do for every state
             for prob, next_state, reward in P[s][pi(s)]:  # calculate one Bellman step --> i.e., sum over all probabilities of transitions and reward for that state, the action suggested by the (fixed) policy, the reward earned (dictated by the model), and the cost-to-go from the next state (which is also decided by the model)
-                V[s] += prob * (reward + gamma * prev_V[next_state])
+                V[s] = np.int64(V[s] + prob * (reward + gamma * prev_V[next_state]))
         #print(np.max(np.abs(prev_V - V)))
         if np.max(np.abs(prev_V - V)) < epsilon: #check if the new V estimate is close enough to the previous one;     
             break # if yes, finish loop
         prev_V = V.copy() #freeze the new values (to be used as the next V(s'))
         t += 1
-        Vplot[:,t] = prev_V  # accounting for GUI  
+        #Vplot[:,t] = prev_V  # accounting for GUI  
     #print("num of evaluation iterations ",t)
     return V
 
@@ -542,8 +512,8 @@ def policy_iteration(P, gamma = 1.0, epsilon = 1e-10):
         pi = policy_improvement(V,P,gamma)          #get a better policy using the value function of the previous one just calculated 
         
         t += 1
-        Pplot[:,t]= [pi(s) for s in range(len(P))]  #keep track of the policy evolution
-        Vplot[:,t] = V                              #and the value function evolution (for the GUI)
+        #Pplot[:,t]= [pi(s) for s in range(len(P))]  #keep track of the policy evolution
+        #Vplot[:,t] = V                              #and the value function evolution (for the GUI)
     
         if old_pi == {s:pi(s) for s in range(len(P))}: # you have converged to the optimal policy if the "improved" policy is exactly the same as in the previous step
             break
@@ -561,15 +531,16 @@ def print_policy(policy, num_states=8):
 #############################################################
 ###################### Question 1 ###########################
 #print("before policy_iteration ")
-V_opt1,P_opt1 = policy_iteration(P1,0)
-print("\nPolicy after optimization:")
-print_policy(P_opt1)
+# V_opt1,P_opt1 = policy_iteration(P1,0)
+# print("\nPolicy after optimization:")
+# print_policy(P_opt1)
 
 
 
 
 #############################################################
 ###################### Question 2 ###########################
+# print("Question 2")
 # print("before policy_iteration ")
 # V_opt2,P_opt2 = policy_iteration(P2,0.9)
 # print("\nPolicy after optimization:")
@@ -578,113 +549,15 @@ print_policy(P_opt1)
 
 #############################################################
 ###################### Question 3 ###########################
-# print("before policy_iteration ")
+print("Question 3")
+print("before policy_iteration ")
+P3 = generate_environment(3)
+for key, value in P3.items():
+    print(f"{key}: {value}")
+
 # V_opt3,P_opt3 = policy_iteration(P3,0.9)
 # print("\nPolicy after optimization:")
-# print_policy(P_opt3)
-
-
-
-
-
-
-
-
-
-
-
-# The following implements the GUI if you are going to use it on your own PC. It will not run as is on Colab. 
-# I would recommend to maintain some sort of simple GUI like this for your own implementations as well...it might help you. But it is not mandatory
-# If you want to use in Colab, comment out the code from this point on.
-
-
-# def P_to_text(a):
-#     if a == 0: return 'K' 
-#     if a == 1: return 'S'
-#     # if a == 2: return 'R'
-#     # if a == 3: return 'U'
-    
-    
-# for s in range(len(P)):
-#     print(P_opt(s))
-
-# frame_text_V = tk.Frame()
-# frame_V = tk.Frame(highlightbackground="blue", highlightthickness=2)
-# frame_text_P = tk.Frame()
-# frame_P = tk.Frame(highlightbackground="green", highlightthickness=2)
-# frame_text_R = tk.Frame()
-# frame_R = tk.Frame(highlightbackground="red", highlightthickness=2)
-
-
-
-# def submit():
-#     iter = int(e.get())
-#     rows = []
-
-#     for i in range(n):
-#         cols = []
-#         for j in range(m):
-# #            e = Entry(relief=GROOVE, master = frame_V)
-#             e2 = tk.Label(master = frame_V, text = ( '%f'  %(Vplot[i*m+j,iter])), font=("Arial", 14))
-#             e2.grid(row=i, column=j, sticky=N+S+E+W, padx=10, pady = 10)   
-# #            e.insert(END, '%f'  %(v[i,j]))
-#             cols.append(e2)    
-#         rows.append(cols)
-    
-#     rows = []
-
-#     for i in range(n):
-#         cols = []
-#         for j in range(m):
-# #            e = Entry(relief=GROOVE, master = frame_V)
-#             if i*m+j in holes:
-#                 e3 = tk.Label(master = frame_P, text = 'H', font=("Arial", 18))
-#             else:
-#                 e3 = tk.Label(master = frame_P, text = P_to_text((Pplot[i*m+j,iter])), font=("Arial", 14))
-#             e3.grid(row=i, column=j, sticky=N+S+E+W, padx=10, pady = 10)            
-# #            e.insert(END, '%f'  %(v[i,j]))
-#             cols.append(e3)
-#         rows.append(cols)
-         
-# rows = []
-    
-# for i in range(n):
-#     cols = []
-#     for j in range(m):
-#         e2 = tk.Label(master = frame_R, text = ( '%f'  %(reward[i*m+j])), font=("Arial", 14))
-#         e2.grid(row=i, column=j, sticky=N+S+E+W, padx=10, pady = 10)
-# #        e2.insert(END, '%f'  %(r[i,j]))
-#         cols.append(e2)
-#     rows.append(cols)
-    
-    
-
-# label_V = tk.Label(master=frame_text_V, text="Value Function at Iteration:", font=("Arial", 18))
-# label_V.pack()
-# iter_btn=tk.Button(frame_text_V,text = 'Submit', command = submit, font=("Arial", 18))
-# iter_btn.pack()
-# e = Entry(relief=GROOVE, master = frame_text_V, font=("Arial", 18))
-# e.pack()
-
-
-
-# label_P = tk.Label(master=frame_text_P, text="Optimal Policy:", font=("Arial", 18))
-# label_P.pack()
-
-# label_R = tk.Label(master=frame_text_R, text="Reward Function:", font=("Arial", 18))
-# label_R.pack()
-
-# frame_text_V.pack()
-# frame_V.pack()
-# frame_text_P.pack()
-# frame_P.pack()
-# frame_text_R.pack()
-# frame_R.pack()
-
-
-# mainloop()
-
-
+# print_policy(P_opt3,3*2**3)
 
 
 
