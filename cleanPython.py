@@ -542,25 +542,23 @@ def print_policy(policy, num_states=8):
 
 #############################################################
 ###################### Question 2 ###########################
-# print("Question 2")
-# print("before policy_iteration ")
-# V_opt2,P_opt2 = policy_iteration(P2,0.9)
-# print("\nPolicy after optimization:")
-# print_policy(P_opt2)
+print("Question 2")
+print("before policy_iteration ")
+V_opt2,P_opt2 = policy_iteration(P2,0.9)
+print("\nPolicy after optimization:")
+print_policy(P_opt2)
 
 
 #############################################################
 ###################### Question 3 ###########################
-print("Question 3")
-print("before policy_iteration ")
-fee = 0
-P3 = generate_environment(3,fee)
-# # for key, value in P3.items():
-# #     print(f"{key}: {value}")
+# print("Question 3")
+# print("before policy_iteration ")
+# fee = 0
+# P3 = generate_environment(3,fee)
 
-V_opt3,P_opt3 = policy_iteration(P3,0.8)
-print("\nPolicy after optimization:")
-print_policy(P_opt3,len(P3))
+# V_opt3,P_opt3 = policy_iteration(P3,0.8)
+# print("\nPolicy after optimization:")
+# print_policy(P_opt3,len(P3))
 
 
 
