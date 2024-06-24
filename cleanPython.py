@@ -164,8 +164,9 @@ P1 = {
 # This environment implements the stocks environment from the midterm
 # It is used for the question 2 where we need to demonstrate that the optimal policy
 # for some of the states is to switch and in some others to stay
+fee = -0.01
 P2 = {
-
+    
     # State {1,L,L}
     0:{
         action_keep: [
@@ -176,10 +177,10 @@ P2 = {
         ],
 
         action_switch:[
-            (9/20, 4, +0.01),    # {2,L,L}
-            (1/20, 5, +0.05),    # {2,L,H}
-            (9/20, 6, +0.01),    # {2,H,L}
-            (1/20, 7, +0.05)     # {2,H,H}
+            (9/20, 4, +0.01 + fee),    # {2,L,L}
+            (1/20, 5, +0.05 + fee),    # {2,L,H}
+            (9/20, 6, +0.01 + fee),    # {2,H,L}
+            (1/20, 7, +0.05 + fee)     # {2,H,H}
         ]
     },
 
@@ -193,10 +194,10 @@ P2 = {
         ],
 
         action_switch:[
-            (1/20, 4, +0.01),    # {2,L,L}
-            (9/20, 5, +0.05),    # {2,L,H}
-            (1/20, 6, +0.01),    # {2,H,L}
-            (9/20, 7, +0.05)     # {2,H,H}
+            (1/20, 4, +0.01 + fee),    # {2,L,L}
+            (9/20, 5, +0.05 + fee),    # {2,L,H}
+            (1/20, 6, +0.01 + fee),    # {2,H,L}
+            (9/20, 7, +0.05 + fee)     # {2,H,H}
         ]
     },
 
@@ -210,10 +211,10 @@ P2 = {
         ],
 
         action_switch:[
-            (9/20, 4, +0.01),    # {2,L,L}
-            (1/20, 5, +0.05),    # {2,L,H}
-            (9/20, 6, +0.01),    # {2,H,L}
-            (1/20, 7, +0.05)     # {2,H,H}
+            (9/20, 4, +0.01 + fee),    # {2,L,L}
+            (1/20, 5, +0.05 + fee),    # {2,L,H}
+            (9/20, 6, +0.01 + fee),    # {2,H,L}
+            (1/20, 7, +0.05 + fee)     # {2,H,H}
         ]
     },
 
@@ -227,10 +228,10 @@ P2 = {
         ],
 
         action_switch: [
-            (1/20, 4, +0.01),    # {2,L,L}
-            (9/20, 5, +0.05),    # {2,L,H}
-            (1/20, 6, +0.01),    # {2,H,L}
-            (9/20, 7, +0.05)     # {2,H,H}
+            (1/20, 4, +0.01 + fee),    # {2,L,L}
+            (9/20, 5, +0.05  + fee),    # {2,L,H}
+            (1/20, 6, +0.01 + fee),    # {2,H,L}
+            (9/20, 7, +0.05 + fee)     # {2,H,H}
         ]
     },
 
@@ -244,10 +245,10 @@ P2 = {
         ],
 
         action_switch:[
-             (9/20, 0, -0.02),  # {1,L,L}
-             (1/20, 1, -0.02),  # {1,L,H}
-             (9/20, 2, +0.1 ),  # {1,H,L}
-             (1/20, 3, +0.1 )   # {1,H,H}
+             (9/20, 0, -0.02 + fee),  # {1,L,L}
+             (1/20, 1, -0.02 + fee),  # {1,L,H}
+             (9/20, 2, +0.1 + fee),  # {1,H,L}
+             (1/20, 3, +0.1 + fee)   # {1,H,H}
         ]
     },
 
@@ -261,10 +262,10 @@ P2 = {
         ],
 
         action_switch:[
-            (1/20, 0, -0.02),  # {1,L,L}
-            (9/20, 1, -0.02),  # {1,L,H}
-            (1/20, 2, +0.1 ),  # {1,H,L}
-            (9/20, 3, +0.1 )   # {1,H,H}
+            (1/20, 0, -0.02 + fee),  # {1,L,L}
+            (9/20, 1, -0.02 + fee),  # {1,L,H}
+            (1/20, 2, +0.1 + fee),  # {1,H,L}
+            (9/20, 3, +0.1 + fee)   # {1,H,H}
         ]
     },
 
@@ -278,10 +279,10 @@ P2 = {
         ],
 
         action_switch:[
-             (9/20, 0, -0.02),  # {1,L,L}
-             (1/20, 1, -0.02),  # {1,L,H}
-             (9/20, 2, +0.1 ),  # {1,H,L}
-             (1/20, 3, +0.1 )   # {1,H,H}
+             (9/20, 0, -0.02 + fee),  # {1,L,L}
+             (1/20, 1, -0.02 + fee),  # {1,L,H}
+             (9/20, 2, +0.1 + fee),  # {1,H,L}
+             (1/20, 3, +0.1 + fee)   # {1,H,H}
         ]
     },
 
@@ -295,10 +296,10 @@ P2 = {
         ],
 
         action_switch:[
-             (1/20, 0, -0.02),  # {1,L,L}
-             (9/20, 1, -0.02),  # {1,L,H}
-             (1/20, 2, +0.1 ),  # {1,H,L}
-             (9/20, 3, +0.1 )   # {1,H,H}
+             (1/20, 0, -0.02 + fee),  # {1,L,L}
+             (9/20, 1, -0.02 + fee),  # {1,L,H}
+             (1/20, 2, +0.1 + fee),  # {1,H,L}
+             (9/20, 3, +0.1 + fee)   # {1,H,H}
         ]
     }
 
@@ -342,7 +343,7 @@ def generate_environment(N):
     states_for_each_stock = 2**N
     total_states = N * states_for_each_stock
     max_state_length = N
-    print(max_state_length)
+    #print(max_state_length)
     
     P = {}
     pi = []
@@ -412,7 +413,7 @@ def generate_environment(N):
             reward = random.uniform(-0.02, 0.1)
             action_Keep.append((transitionProb,nextState,reward))
         #-----------------------------------------------------------------------------------------------------------------------------------------------
-        fee = 0.09
+        fee = 0.05
         #__Switch Stock ________________________________________________________________________________________________________________
         for j in range (0, total_states): # for every possible transition when keeping the same stock
             trans_stock = j // states_for_each_stock
@@ -451,7 +452,6 @@ def generate_environment(N):
     
     
     return P
-
 
 
 
@@ -504,7 +504,7 @@ def policy_iteration(P, gamma = 1.0, epsilon = 1e-10):
     random_actions = np.random.choice(tuple(P[0].keys()), len(P))     # start with random actions for each state  
     pi = lambda s: {s:a for s, a in enumerate(random_actions)}[s]     # and define your initial policy pi_0 based on these action (remember, we are passing policies around as python "functions", hence the need for this second line)
     print("Policy in first iteration:")
-    print_policy(pi)
+    print_policy(pi,len(P))
     print("\n")
     while True:
         old_pi = {s: pi(s) for s in range(len(P))}  #keep the old policy to compare with new
@@ -530,7 +530,7 @@ def print_policy(policy, num_states=8):
 
 #############################################################
 ###################### Question 1 ###########################
-#print("before policy_iteration ")
+# print("before policy_iteration ")
 # V_opt1,P_opt1 = policy_iteration(P1,0)
 # print("\nPolicy after optimization:")
 # print_policy(P_opt1)
@@ -551,13 +551,14 @@ def print_policy(policy, num_states=8):
 ###################### Question 3 ###########################
 print("Question 3")
 print("before policy_iteration ")
-P3 = generate_environment(3)
-for key, value in P3.items():
-    print(f"{key}: {value}")
+P3 = generate_environment(10)
+# # for key, value in P3.items():
+# #     print(f"{key}: {value}")
 
-# V_opt3,P_opt3 = policy_iteration(P3,0.9)
-# print("\nPolicy after optimization:")
-# print_policy(P_opt3,3*2**3)
+V_opt3,P_opt3 = policy_iteration(P3,0.8)
+print("\nPolicy after optimization:")
+print_policy(P_opt3,len(P3))
+
 
 
 
