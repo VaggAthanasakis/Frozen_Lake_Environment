@@ -1,2 +1,2 @@
 -Implementation of Frozen Lake Environment
--Finding optimal policy using policy iteration and value iteration algorithms
+-Finding optimal policy using policy iteration algorithm
